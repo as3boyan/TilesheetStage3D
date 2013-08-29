@@ -1,13 +1,13 @@
 package com.aliceofcrazypie.tilesheettest;
-import com.asliceofcrazypie.nme.TilesheetStage3D;
+import com.asliceofcrazypie.flash.TilesheetStage3D;
 import net.hires.debug.Stats;
-import nme.Assets;
-import nme.display.BitmapData;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.geom.Point;
-import nme.geom.Rectangle;
-import nme.Lib;
+import openfl.Assets;
+import flash.display.BitmapData;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flash.Lib;
 
 /**
  * ...

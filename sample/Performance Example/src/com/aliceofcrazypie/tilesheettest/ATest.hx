@@ -1,6 +1,6 @@
 package com.aliceofcrazypie.tilesheettest;
-import nme.display.Sprite;
-import nme.events.Event;
+import flash.display.Sprite;
+import flash.events.Event;
 
 /**
  * ...

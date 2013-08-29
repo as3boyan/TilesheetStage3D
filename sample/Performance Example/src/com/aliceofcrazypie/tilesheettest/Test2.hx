@@ -1,18 +1,17 @@
 package com.aliceofcrazypie.tilesheettest;
 
-import nme.display.DisplayObject;
-import nme.display.DisplayObjectContainer;
-import nme.display.Graphics;
-import nme.display.SimpleButton;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.Lib;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.Lib;
 
 
 
 
 #if flash9
-import flash.utils.TypedDictionary;
 import flash.Vector;
 #end
 
@@ -176,11 +175,11 @@ class Test2 extends ATest
 	}
 	
 	#if flash9
-	private static var graphicCache:TypedDictionary<Graphics,Sprite>;
+	private static var graphicCache:Map<Graphics,Sprite>;
 	
 	public static function __init__():Void
 	{
-		graphicCache = new TypedDictionary<Graphics,Sprite>();
+		graphicCache = new Map<Graphics,Sprite>();
 	}
 	#end
 	
@@ -214,7 +213,7 @@ class Test2 extends ATest
 		target.removeEventListener(Event.REMOVED_FROM_STAGE, removeFromCache);
 		
 		#if flash9
-		graphicCache.delete( target.graphics );
+		graphicCache.remove( target.graphics );
 		#end
 	}
 	

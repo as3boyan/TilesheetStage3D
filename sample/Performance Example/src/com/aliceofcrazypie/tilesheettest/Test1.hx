@@ -1,21 +1,21 @@
 package com.aliceofcrazypie.tilesheettest;
-import com.asliceofcrazypie.nme.TilesheetStage3D;
+import com.asliceofcrazypie.flash.TilesheetStage3D;
 import net.hires.debug.Stats;
-import nme.display.DisplayObject;
-import nme.display.Tilesheet;
-import nme.events.KeyboardEvent;
-import nme.geom.Point;
-import nme.Assets;
-import nme.display.BitmapData;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.geom.Rectangle;
-import nme.Lib;
-import nme.text.TextField;
-import nme.text.TextFieldAutoSize;
-import nme.text.TextFormat;
-import nme.ui.Keyboard;
-import nme.utils.Timer;
+import flash.display.DisplayObject;
+import openfl.display.Tilesheet;
+import flash.events.KeyboardEvent;
+import flash.geom.Point;
+import openfl.Assets;
+import flash.display.BitmapData;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.Rectangle;
+import flash.Lib;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
+import flash.ui.Keyboard;
+import flash.utils.Timer;
 
 /**
  * ...

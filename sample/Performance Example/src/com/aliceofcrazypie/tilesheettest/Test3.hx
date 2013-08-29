@@ -1,6 +1,6 @@
 package com.aliceofcrazypie.tilesheettest;
-import nme.events.Event;
-import nme.system.Capabilities;
+import flash.events.Event;
+import flash.system.Capabilities;
 
 /**
  * ...

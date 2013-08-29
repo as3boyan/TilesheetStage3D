@@ -1,0 +1,17 @@
+-main ApplicationMain 
+-lib openfl
+-cp src
+-cp ./../../src/
+-cp ./../Shared/
+-D tools=1
+-D openfl_ver=1.0.9
+-D openfl
+-D display
+-D web
+--no-output
+-swf-version 11.2
+-swf bin/flash/bin/TilesheetTest.swf
+-swf-header 720:405:60:000000
+-cp bin/flash/haxe
+#--remap nme:flash
+

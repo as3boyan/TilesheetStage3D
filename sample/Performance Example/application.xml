@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- NMML reference: https://gist.github.com/1763850 -->
+	
+	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
+	<meta title="TilesheetPerformanceTest" package="com.aliceofcrazypie.tilesheettest.TilesheetPerformanceTest" version="1.0.0" company="Paul M Pepper" />
+	
+	<!-- output -->
+	<app main="com.aliceofcrazypie.tilesheettest.Main" file="TilesheetTest" path="bin" />
+	
+	<window background="#000000" fps="60" />
+	<window width="720" height="405" unless="mobile" />
+	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
+	
+	<!-- classpath, haxe libs -->
+	<source path="src" />
+	<source path="./../../src/" />
+	<source path="./../Shared/" />
+	<haxelib name="openfl" />
+	<!--<haxelib name="starling" /> -->
+	<!--<haxelib name="format" /> -->
+	
+	<icon path="assets/nme.svg" />
+	<assets path="assets/img" rename="img" />
+	
+	<set name="SWF_VERSION" value="11.2" if="flash" ></set>
+</project>

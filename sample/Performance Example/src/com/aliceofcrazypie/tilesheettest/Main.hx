@@ -1,11 +1,11 @@
 package com.aliceofcrazypie.tilesheettest;
 
-import com.asliceofcrazypie.nme.TilesheetStage3D;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.events.KeyboardEvent;
-import nme.Lib;
-import nme.ui.Keyboard;
+import com.asliceofcrazypie.flash.TilesheetStage3D;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.KeyboardEvent;
+import flash.Lib;
+import flash.ui.Keyboard;
 
 #if flash11
 import flash.display3D.Context3DRenderMode;
@@ -117,8 +117,8 @@ class Main extends Sprite
 	static public function main() 
 	{
 		var stage = Lib.current.stage;
-		stage.scaleMode = nme.display.StageScaleMode.NO_SCALE;
-		stage.align = nme.display.StageAlign.TOP_LEFT;
+		stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
+		stage.align = flash.display.StageAlign.TOP_LEFT;
 		
 		Lib.current.addChild(new Main());
 	}
