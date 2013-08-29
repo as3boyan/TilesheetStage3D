@@ -7,6 +7,8 @@ Ported to Haxe 3/OpenFL by AS3Boyan
 
 Original repository: https://code.google.com/p/tilesheet-stage3d/
 
+Currently it's not very fast at rendering lots of sprites, but at least, it's much better than default Flash fallback(In tilelayer).
+
 You can use TilesheetStage3D under the terms of the MIT license.
 
 OpenFL Stage3D drawTiles thread:
