@@ -152,7 +152,7 @@ class TilesheetStage3D extends Tilesheet
 		}
 	}
 	
-	override public function drawTiles(graphics:Graphics, tileData:Array<Float>, smooth:Bool = false, flags:Int = 0):Void 
+	override public function drawTiles(graphics:Graphics, tileData:Array<Float>, smooth:Bool = false, flags:Int = 0,count:Int = -1):Void
 	{
 		if ( context != null && context.context3D != null && !Type.enumEq( fallbackMode, FallbackMode.FORCE_FALLBACK ) )
 		{
@@ -230,14 +230,22 @@ class TilesheetStage3D extends Tilesheet
 				tileDataPerItem++;
 			}
 			
-			var numItems:Int = Std.int( tileData.length / tileDataPerItem );
+			var totalCount = count;
+			
+			if (count < 0) {
+				
+				totalCount = tileData.length;
+				
+			}
+			
+			var numItems:Int = Std.int( totalCount / tileDataPerItem );
 			
 			if ( numItems == 0 )
 			{
 				return;
 			}
 			
-			if ( tileData.length % tileDataPerItem != 0 )
+			if ( totalCount % tileDataPerItem != 0 )
 			{
 				throw new ArgumentError( 'tileData length must be a multiple of '+tileDataPerItem );
 			}
@@ -263,7 +271,7 @@ class TilesheetStage3D extends Tilesheet
 			
 			var spriteSortItem:SpriteSortItem = context.getSpriteSortItem( graphics );
 			
-			while ( tileDataPos < tileData.length )
+			while ( tileDataPos < totalCount )
 			{
 				numItemsThisLoop = numItems > maxNumItems ? maxNumItems : numItems;
 				
@@ -355,8 +363,7 @@ class TilesheetStage3D extends Tilesheet
 			{
 				throw new ArgumentError( 'Fallback mode does not support matrix transformations' );
 			}
-			
-			super.drawTiles(graphics, tileData, smooth, flags);
+			super.drawTiles(graphics, tileData, smooth, flags,count);
 		}
 	}
 		
