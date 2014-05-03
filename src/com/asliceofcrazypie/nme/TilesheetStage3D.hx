@@ -286,8 +286,8 @@ class TilesheetStage3D extends Tilesheet
 					if ( isMatrix )
 					{
 						transform_a = tileData[tileDataPos + 3];
-						transform_c = tileData[tileDataPos + 4];
-						transform_b = tileData[tileDataPos + 5];
+						transform_b = tileData[tileDataPos + 4];
+						transform_c = tileData[tileDataPos + 5];
 						transform_d = tileData[tileDataPos + 6];
 					}
 					else
