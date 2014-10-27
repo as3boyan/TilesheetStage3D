@@ -70,7 +70,7 @@ class TilesheetStage3D extends Tilesheet
 	#if flash11
 	private function onResetTexture(e:Event):Void 
 	{
-		texture = context.uploadTexture( nmeBitmap );
+		texture = context.uploadTexture( __bitmap );
 	}
 	
 	private var texture:Texture;
@@ -509,10 +509,10 @@ class TilesheetStage3D extends Tilesheet
 			this.texture = null;
 		}
 		
-		if ( this.nmeBitmap != null )
+		if ( this.__bitmap != null )
 		{
-			this.nmeBitmap.dispose();
-			this.nmeBitmap = null;
+			this.__bitmap.dispose();
+			this.__bitmap = null;
 		}
 	}
 	
