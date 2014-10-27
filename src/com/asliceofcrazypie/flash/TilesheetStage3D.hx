@@ -74,7 +74,7 @@ class TilesheetStage3D extends Tilesheet
 	#if flash11
 	private function onResetTexture(e:Event):Void 
 	{
-		texture = context.uploadTexture( nmeBitmap );
+		texture = context.uploadTexture( __bitmap );
 	}
 	
 	private var texture:Texture;
@@ -371,11 +371,11 @@ class TilesheetStage3D extends Tilesheet
 	
 	private inline function setVertexData(tileId:Int, transform_tx:Float, transform_ty:Float, transform_a:Float, transform_b:Float, transform_c:Float, transform_d:Float, isRGB:Bool, isAlpha:Bool, r:Float, g:Float, b:Float, a:Float, vertices:Vector<Float>, vertexPos:Int, depth:Float ):Void 
 	{
-		var c:Point = tilePoints[tileId];
+		var c:Point = __centerPoints[tileId];
 		
-		var uv:Rectangle = tileUVs[tileId];
+		var uv:Rectangle = __tileUVs[tileId];
 		
-		var tile:Rectangle = tiles[tileId];
+		var tile:Rectangle = __tileRects[tileId];
 		var imgWidth:Int = Std.int( tile.width );
 		var imgHeight:Int = Std.int( tile.height );
 		
@@ -516,10 +516,10 @@ class TilesheetStage3D extends Tilesheet
 			this.texture = null;
 		}
 		
-		if ( this.nmeBitmap != null )
+		if ( this.__bitmap != null )
 		{
-			this.nmeBitmap.dispose();
-			this.nmeBitmap = null;
+			this.__bitmap.dispose();
+			this.__bitmap = null;
 		}
 	}
 	
