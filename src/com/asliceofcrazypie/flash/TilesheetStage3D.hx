@@ -162,7 +162,8 @@ class TilesheetStage3D extends Tilesheet
 			var isRotation:Bool = (flags & Tilesheet.TILE_ROTATION) > 0;
 			var isRGB:Bool = (flags & Tilesheet.TILE_RGB) > 0;
 			var isAlpha:Bool = (flags & Tilesheet.TILE_ALPHA) > 0;
-			
+			var isBlendAdd:Bool = (flags & Tilesheet.TILE_BLEND_ADD) > 0;
+
 			var scale:Float = 1;
 			var rotation:Float = 0;
 			var cosRotation:Float = Math.cos( rotation );
@@ -280,6 +281,7 @@ class TilesheetStage3D extends Tilesheet
 				renderJob.isRGB = isRGB;
 				renderJob.isAlpha = isAlpha;
 				renderJob.isSmooth = smooth;
+				renderJob.isBlendAdd = isBlendAdd;				
 				renderJob.dataPerVertice = dataPerVertice;
 				renderJob.numVertices = numItemsThisLoop * vertexPerItem;
 				

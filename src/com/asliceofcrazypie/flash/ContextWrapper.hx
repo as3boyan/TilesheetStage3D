@@ -210,7 +210,7 @@ class ContextWrapper extends EventDispatcher
 			
 			if ( context3D != null )
 			{
-				context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+				context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
 				
 				baseTransformMatrix = new Matrix3D();
 				
