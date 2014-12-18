@@ -53,7 +53,7 @@ class RenderJob
 			//blend mode
 			if (!isBlendAdd)
 			{
-				context.context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.SOURCE_ALPHA, flash.display3D.Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+				context.context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.ONE, flash.display3D.Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
 			}
 			else
 			{
