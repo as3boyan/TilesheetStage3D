@@ -22,7 +22,8 @@ class RenderJob
 	public var isRGB(default, default):Bool;
 	public var isAlpha(default, default):Bool;
 	public var isSmooth(default, default):Bool;
-	
+	public var isBlendAdd(default, default):Bool;
+
 	public var dataPerVertice(default,default):Int;
 	public var numVertices(default,set):Int;
 	public var numIndices(default, null):Int;
@@ -49,6 +50,16 @@ class RenderJob
 	{
 		if ( context.context3D.driverInfo != 'Disposed' )
 		{
+			//blend mode
+			if (!isBlendAdd)
+			{
+				context.context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.SOURCE_ALPHA, flash.display3D.Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+			}
+			else
+			{
+				context.context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.ONE, flash.display3D.Context3DBlendFactor.ONE);
+			}
+
 			context.setProgram(isRGB,isAlpha,isSmooth);//assign appropriate shader
 				
 			context.setTexture( texture );
