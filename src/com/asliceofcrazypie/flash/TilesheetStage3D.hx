@@ -262,8 +262,8 @@ class TilesheetStage3D extends Tilesheet
 			
 			while ( tileDataPos < totalCount )
 			{
-				// TODO: call another render job if there is too much data for one...
 				numItemsThisLoop = numItems > maxNumItems ? maxNumItems : numItems;
+				numItems -= numItemsThisLoop;
 				
 				renderJob = RenderJob.getJob();
 				renderJob.texture = texture;
