@@ -5,7 +5,6 @@ package com.asliceofcrazypie.flash;
 import flash.display3D.Context3D;
 import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
-//import flash.utils.Map;
 import flash.Vector;
 import flash.Vector;
 import flash.display.BitmapData;
