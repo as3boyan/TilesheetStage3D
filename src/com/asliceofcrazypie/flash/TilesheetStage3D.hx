@@ -1,17 +1,12 @@
 package com.asliceofcrazypie.flash;
 
-import flash.Vector;
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 import openfl.display.Tilesheet;
-import flash.events.Event;
+import openfl.events.Event;
 
 #if flash11
 import flash.Vector;
 import haxe.Timer;
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.SimpleButton;
-import flash.display.Sprite;
 import flash.errors.Error;
 import flash.utils.Endian;
 import flash.display3D.Context3D;
@@ -24,15 +19,11 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
 import flash.display3D.VertexBuffer3D;
-import flash.geom.Matrix3D;
-import flash.geom.Vector3D;
 import flash.display.Stage;
 import flash.display.Graphics;
-import flash.Vector;
 import flash.errors.ArgumentError;
 import flash.utils.ByteArray;
 import flash.events.ErrorEvent;
-import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 #end
@@ -41,7 +32,6 @@ import flash.geom.Rectangle;
  * ...
  * @author Paul M Pepper
  */
-
 class TilesheetStage3D extends Tilesheet
 {
 	public function new( inImage:BitmapData ) 
@@ -53,7 +43,6 @@ class TilesheetStage3D extends Tilesheet
 		super( inImage );
 		
 		#if flash11
-		
 		fallbackMode = FallbackMode.ALLOW_FALLBACK;
 		
 		if ( !_isInited && !Type.enumEq( fallbackMode, FallbackMode.NO_FALLBACK ) )
@@ -66,7 +55,6 @@ class TilesheetStage3D extends Tilesheet
 			onResetTexture( null );
 			context.addEventListener( ContextWrapper.RESET_TEXTURE, onResetTexture );
 		}
-		
 		#end
 	}
 	
@@ -396,7 +384,7 @@ class TilesheetStage3D extends Tilesheet
 		}
 		else
 		{
-			uv.setTo(tile.left / __bitmap.width, tile.top / __bitmap.height, tile.right / __bitmap.width, tile.bottom / __bitmap.height);
+			uv.setTo(tile.left / __bitmapWidth, tile.top / __bitmapHeight, tile.right / __bitmapWidth, tile.bottom / __bitmapHeight);
 		}
 		
 		var imgWidth:Int = Std.int( tile.width );
@@ -576,23 +564,22 @@ class TilesheetStage3D extends Tilesheet
 			
 			newTexture.copyPixels( texture, texture.rect, new Point(), null, null, true );
 			
-			texture.dispose();
+			if (autoDispose)
+			{
+				texture.dispose();
+			}
 			
 			newTexture;
 		}
 	}
-	
-	
 	#end
 }
 
 #if flash11
-
 enum FallbackMode
 {
 	NO_FALLBACK;
 	ALLOW_FALLBACK;
 	FORCE_FALLBACK;
 }
-
 #end

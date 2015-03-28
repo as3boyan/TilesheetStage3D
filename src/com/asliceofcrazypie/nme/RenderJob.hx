@@ -3,28 +3,26 @@ package com.asliceofcrazypie.nme;
 #if flash11
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.textures.Texture;
+import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.VertexBuffer3D;
 import flash.Vector;
 import flash.Vector;
 import nme.errors.Error;
 
-import flash.display3D.Context3DVertexBufferFormat;
-
 /**
  * ...
  * @author Paul M Pepper
  */
-
 class RenderJob 
 {
-	public var texture(default, default):Texture;
+	public var texture:Texture;
 	public var vertices(default, null):Vector<Float>;
-	public var isRGB(default, default):Bool;
-	public var isAlpha(default, default):Bool;
-	public var isSmooth(default, default):Bool;
+	public var isRGB:Bool;
+	public var isAlpha:Bool;
+	public var isSmooth:Bool;
 	
-	public var dataPerVertice(default,default):Int;
-	public var numVertices(default,setNumVertices):Int;
+	public var dataPerVertice:Int;
+	public var numVertices(default, setNumVertices):Int;
 	public var numIndices(default, null):Int;
 	
 	private static var renderJobPool:Array<RenderJob>;

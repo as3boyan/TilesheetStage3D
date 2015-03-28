@@ -1,7 +1,6 @@
 package com.asliceofcrazypie.nme;
 
 #if flash11
-
 import flash.display3D.Context3D;
 import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
@@ -31,9 +30,6 @@ import nme.utils.Endian;
  * ...
  * @author Paul M Pepper
  */
-
-
-
 class ContextWrapper extends EventDispatcher
 {
 	public static inline var RESET_TEXTURE:String = 'resetTexture';

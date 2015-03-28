@@ -1,6 +1,6 @@
 package com.asliceofcrazypie.nme;
-#if flash11
 
+#if flash11
 import flash.display3D.textures.Texture;
 import flash.Vector;
 import flash.Vector;
@@ -11,14 +11,11 @@ import nme.display.Sprite;
  * ...
  * @author Paul M Pepper
  */
-
-
-
 class SpriteSortItem
 {
 
 	public var sprite(default, null):Sprite;
-	public var depths(default,null):Vector<Int>;
+	public var depths(default, null):Vector<Int>;
 	
 	private var renderJobs:Array<RenderJob>;
 	
@@ -106,7 +103,6 @@ class SpriteSortItem
 		var currentDepthIndA:Int = a.depths.length - 1;
 		var currentDepthIndB:Int = b.depths.length - 1;
 		
-		
 		while ( currentDepthIndA >= 0 && currentDepthIndB >= 0 )
 		{
 			currentDepthA = a.depths[currentDepthIndA--];
@@ -125,5 +121,4 @@ class SpriteSortItem
 		return a.depths.length - b.depths.length;//this catches situations where one item is the child of another
 	}
 }
-
 #end
