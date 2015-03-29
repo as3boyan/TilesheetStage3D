@@ -42,7 +42,6 @@ import nme.geom.Rectangle;
  * ...
  * @author Paul M Pepper
  */
-
 class TilesheetStage3D extends Tilesheet
 {
 	public function new( inImage:BitmapData ) 
@@ -50,7 +49,6 @@ class TilesheetStage3D extends Tilesheet
 		super( inImage );
 		
 		#if flash11
-		
 		fallbackMode = FallbackMode.ALLOW_FALLBACK;
 		
 		if ( !_isInited && !Type.enumEq( fallbackMode, FallbackMode.NO_FALLBACK ) )
@@ -63,7 +61,6 @@ class TilesheetStage3D extends Tilesheet
 			onResetTexture( null );
 			context.addEventListener( ContextWrapper.RESET_TEXTURE, onResetTexture );
 		}
-		
 		#end
 	}
 	
@@ -546,7 +543,10 @@ class TilesheetStage3D extends Tilesheet
 			
 			newTexture.copyPixels( texture, texture.rect, new Point(), null, null, true );
 			
-			texture.dispose();
+			if (autoDispose)
+			{
+				texture.dispose();
+			}
 			
 			newTexture;
 		}
@@ -557,12 +557,10 @@ class TilesheetStage3D extends Tilesheet
 }
 
 #if flash11
-
 enum FallbackMode
 {
 	NO_FALLBACK;
 	ALLOW_FALLBACK;
 	FORCE_FALLBACK;
 }
-
 #end

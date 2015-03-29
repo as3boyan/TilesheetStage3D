@@ -1,6 +1,6 @@
 package com.asliceofcrazypie.flash;
-#if flash11
 
+#if flash11
 import flash.display3D.textures.Texture;
 import flash.Vector;
 import flash.Vector;
@@ -11,14 +11,11 @@ import flash.display.Sprite;
  * ...
  * @author Paul M Pepper
  */
-
-
-
 class SpriteSortItem
 {
 
 	public var sprite(default, null):Sprite;
-	public var depths(default,null):Vector<Int>;
+	public var depths(default, null):Vector<Int>;
 	
 	private var renderJobs:Array<RenderJob>;
 	
@@ -125,5 +122,4 @@ class SpriteSortItem
 		return a.depths.length - b.depths.length;//this catches situations where one item is the child of another
 	}
 }
-
 #end
