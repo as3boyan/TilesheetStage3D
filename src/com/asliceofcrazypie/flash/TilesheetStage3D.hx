@@ -34,7 +34,7 @@ import flash.geom.Rectangle;
  */
 class TilesheetStage3D extends Tilesheet
 {
-	public function new( inImage:BitmapData ) 
+	public function new( inImage:BitmapData, premultipliedAlpha:Bool = true ) 
 	{
 		#if flash11
 		inImage = TilesheetStage3D.fixTextureSize( inImage.clone(), true );
@@ -43,6 +43,7 @@ class TilesheetStage3D extends Tilesheet
 		super( inImage );
 		
 		#if flash11
+		this.premultipliedAlpha = premultipliedAlpha;
 		fallbackMode = FallbackMode.ALLOW_FALLBACK;
 		
 		if ( !_isInited && !Type.enumEq( fallbackMode, FallbackMode.NO_FALLBACK ) )
@@ -63,6 +64,8 @@ class TilesheetStage3D extends Tilesheet
 	{
 		texture = context.uploadTexture( __bitmap );
 	}
+	
+	public var premultipliedAlpha(default, null):Bool;
 	
 	private var texture:Texture;
 	
@@ -102,12 +105,12 @@ class TilesheetStage3D extends Tilesheet
 			
 			for ( i in 0...Std.int( ( MAX_VERTEX_PER_BUFFER / 4 ) ) )
 			{
-				indices.writeShort( (i*4) + 2 );
+				indices.writeShort( (i * 4) + 2 );
 				indices.writeShort( (i*4) + 1 );
-				indices.writeShort( (i*4) + 0 );
-				indices.writeShort( (i*4) + 3 );
-				indices.writeShort( (i*4) + 2 );
-				indices.writeShort( (i*4) + 0 );
+				indices.writeShort( (i * 4) + 0 );
+				indices.writeShort( (i * 4) + 3 );
+				indices.writeShort( (i * 4) + 2 );
+				indices.writeShort( (i * 4) + 0 );
 			}
 			
 			_stage = stage;
@@ -150,6 +153,8 @@ class TilesheetStage3D extends Tilesheet
 			var isRGB:Bool = (flags & Tilesheet.TILE_RGB) > 0;
 			var isAlpha:Bool = (flags & Tilesheet.TILE_ALPHA) > 0;
 			var isBlendAdd:Bool = (flags & Tilesheet.TILE_BLEND_ADD) > 0;
+			var isBlendMultiply:Bool = (flags & Tilesheet.TILE_BLEND_MULTIPLY) > 0;
+			var isBlendScreen:Bool = (flags & Tilesheet.TILE_BLEND_SCREEN) > 0;
 			var isRect:Bool = (flags & Tilesheet.TILE_RECT) > 0;
 			var isOrigin:Bool = (flags & Tilesheet.TILE_ORIGIN) > 0;
 
@@ -258,9 +263,26 @@ class TilesheetStage3D extends Tilesheet
 				renderJob.isRGB = isRGB;
 				renderJob.isAlpha = isAlpha;
 				renderJob.isSmooth = smooth;
-				renderJob.isBlendAdd = isBlendAdd;				
 				renderJob.dataPerVertice = dataPerVertice;
 				renderJob.numVertices = numItemsThisLoop * vertexPerItem;
+				renderJob.premultipliedAlpha = this.premultipliedAlpha;
+				
+				if (isBlendAdd)
+				{
+					renderJob.blendMode = RenderJob.BLEND_ADD;
+				}
+				else if (isBlendMultiply)
+				{
+					renderJob.blendMode = RenderJob.BLEND_MULTIPLY;
+				}
+				else if (isBlendScreen)
+				{
+					renderJob.blendMode = RenderJob.BLEND_SCREEN;
+				}
+				else
+				{
+					renderJob.blendMode = RenderJob.BLEND_NORMAL;
+				}
 				
 				vertexPos = 0;
 				

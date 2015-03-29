@@ -4,8 +4,8 @@ package com.asliceofcrazypie.nme;
 import flash.display3D.textures.Texture;
 import flash.Vector;
 import flash.Vector;
-import nme.display.DisplayObjectContainer;
-import nme.display.Sprite;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 
 /**
  * ...
@@ -102,6 +102,7 @@ class SpriteSortItem
 		var currentDepthB:Int;
 		var currentDepthIndA:Int = a.depths.length - 1;
 		var currentDepthIndB:Int = b.depths.length - 1;
+		
 		
 		while ( currentDepthIndA >= 0 && currentDepthIndB >= 0 )
 		{

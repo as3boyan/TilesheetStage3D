@@ -4,27 +4,26 @@ package com.asliceofcrazypie.nme;
 import flash.display3D.Context3D;
 import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
-import flash.utils.TypedDictionary;
 import flash.Vector;
 import flash.Vector;
-import nme.display.BitmapData;
-import nme.display.DisplayObject;
-import nme.display.DisplayObjectContainer;
-import nme.display.Graphics;
-import nme.display.SimpleButton;
-import nme.display.Sprite;
-import nme.display.Stage;
-import nme.events.ErrorEvent;
-import nme.events.Event;
-import nme.events.EventDispatcher;
-import nme.geom.Matrix;
-import nme.geom.Matrix3D;
-import nme.utils.ByteArray;
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Graphics;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.display.Stage;
+import flash.events.ErrorEvent;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.geom.Matrix;
+import flash.geom.Matrix3D;
+import flash.utils.ByteArray;
 import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DBlendFactor;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DTextureFormat;
-import nme.utils.Endian;
+import flash.utils.Endian;
 
 /**
  * ...
@@ -71,8 +70,8 @@ class ContextWrapper extends EventDispatcher
 	private var _initCallback:Void->Void;
 	
 	//graphic to sprite lookup table
-	private var graphicCache:TypedDictionary<Graphics,Sprite>;
-	private var spriteSortItemCache:TypedDictionary<Sprite,SpriteSortItem>;
+	private var graphicCache:Map<Graphics,Sprite>;
+	private var spriteSortItemCache:Map<Sprite,SpriteSortItem>;
 	private var currentSpriteSortItems:Vector<SpriteSortItem>;
 	
 	//avoid unneeded context changes
@@ -114,8 +113,8 @@ class ContextWrapper extends EventDispatcher
 		fragmentDataA = 			rawDataToBytes( fragmentRawDataA );
 		fragmentData = 				rawDataToBytes( fragmentRawData );
 		
-		graphicCache = new TypedDictionary<Graphics,Sprite>();
-		spriteSortItemCache = new TypedDictionary<Sprite,SpriteSortItem>();
+		graphicCache = new Map<Graphics,Sprite>();
+		spriteSortItemCache = new Map<Sprite,SpriteSortItem>();
 		currentSpriteSortItems = new Vector<SpriteSortItem>();
 	}
 	
@@ -206,7 +205,7 @@ class ContextWrapper extends EventDispatcher
 			
 			if ( context3D != null )
 			{
-				context3D.setBlendFactors(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+				context3D.setBlendFactors(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
 				
 				baseTransformMatrix = new Matrix3D();
 				
@@ -456,7 +455,7 @@ class ContextWrapper extends EventDispatcher
 		
 		target.removeEventListener(Event.REMOVED_FROM_STAGE, removeFromCache);
 		
-		graphicCache.delete( target.graphics );
+		graphicCache.remove( target.graphics );
 	}
 	
 	
