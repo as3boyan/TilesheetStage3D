@@ -122,7 +122,6 @@ class RenderJob
 	
 	private inline function setBlending(context:ContextWrapper):Void
 	{
-		RenderJob.initBlendFactors();
 		var factors = RenderJob.premultipliedBlendFactors;
 		if (!premultipliedAlpha)
 		{
@@ -141,11 +140,12 @@ class RenderJob
 	public static function __init__():Void
 	{
 		renderJobPool = [];
-		
 		for ( i in 0...NUM_JOBS_TO_POOL )
 		{
 			renderJobPool.push( new RenderJob() );
 		}
+		
+		RenderJob.initBlendFactors();
 	}
 	
 	private static function initBlendFactors():Void
