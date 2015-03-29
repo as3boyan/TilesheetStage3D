@@ -4,10 +4,11 @@ package com.asliceofcrazypie.flash;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.textures.Texture;
 import flash.display3D.Context3DVertexBufferFormat;
+import flash.display3D.Context3DBlendFactor;
 import flash.display3D.VertexBuffer3D;
 import flash.Vector;
-import flash.Vector;
 import flash.errors.Error;
+import haxe.ds.StringMap;
 
 /**
  * ...
@@ -20,7 +21,9 @@ class RenderJob
 	public var isRGB:Bool;
 	public var isAlpha:Bool;
 	public var isSmooth:Bool;
-	public var isBlendAdd:Bool;
+	
+	public var blendMode:String;
+	public var premultipliedAlpha:Bool;
 
 	public var dataPerVertice:Int;
 	public var numVertices(default, set):Int;
@@ -30,9 +33,17 @@ class RenderJob
 	
 	public static inline var NUM_JOBS_TO_POOL:Int = 25;
 	
+	public static inline var BLEND_NORMAL:String = "normal";
+	public static inline var BLEND_ADD:String = "add";
+	public static inline var BLEND_MULTIPLY:String = "multiply";
+	public static inline var BLEND_SCREEN:String = "screen";
+	
+	private static var premultipliedBlendFactors:StringMap<Array<Context3DBlendFactor>>;
+	private static var noPremultipliedBlendFactors:StringMap<Array<Context3DBlendFactor>>;
+	
 	public function new()
 	{
-		this.vertices = new Vector<Float>( TilesheetStage3D.MAX_VERTEX_PER_BUFFER>>2 );
+		this.vertices = new Vector<Float>( TilesheetStage3D.MAX_VERTEX_PER_BUFFER >> 2 );
 	}
 	
 	private inline function set_numVertices( n:Int ):Int
@@ -49,14 +60,7 @@ class RenderJob
 		if ( context.context3D.driverInfo != 'Disposed' )
 		{
 			//blend mode
-			if (!isBlendAdd)
-			{
-				context.context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.ONE, flash.display3D.Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
-			}
-			else
-			{
-				context.context3D.setBlendFactors(flash.display3D.Context3DBlendFactor.ONE, flash.display3D.Context3DBlendFactor.ONE);
-			}
+			setBlending(context);
 
 			context.setProgram(isRGB,isAlpha,isSmooth);//assign appropriate shader
 				
@@ -116,13 +120,49 @@ class RenderJob
 		}
 	}
 	
+	private inline function setBlending(context:ContextWrapper):Void
+	{
+		var factors = RenderJob.premultipliedBlendFactors;
+		if (!premultipliedAlpha)
+		{
+			factors = RenderJob.noPremultipliedBlendFactors;
+		}
+		
+		var factor:Array<Context3DBlendFactor> = factors.get(blendMode);
+		if (factor == null)
+		{
+			factor = factors.get(RenderJob.BLEND_NORMAL);
+		}
+		
+		context.context3D.setBlendFactors(factor[0], factor[1]);
+	}
+	
 	public static function __init__():Void
 	{
 		renderJobPool = [];
-		
 		for ( i in 0...NUM_JOBS_TO_POOL )
 		{
 			renderJobPool.push( new RenderJob() );
+		}
+		
+		RenderJob.initBlendFactors();
+	}
+	
+	private static function initBlendFactors():Void
+	{
+		if (RenderJob.premultipliedBlendFactors == null)
+		{
+			RenderJob.premultipliedBlendFactors = new StringMap();
+			RenderJob.premultipliedBlendFactors.set(BLEND_NORMAL, [Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA]);
+			RenderJob.premultipliedBlendFactors.set(BLEND_ADD, [Context3DBlendFactor.ONE, Context3DBlendFactor.ONE]);
+			RenderJob.premultipliedBlendFactors.set(BLEND_MULTIPLY, [Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA]);
+			RenderJob.premultipliedBlendFactors.set(BLEND_SCREEN, [Context3DBlendFactor.ONE, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR]);
+			
+			RenderJob.noPremultipliedBlendFactors = new StringMap();
+			RenderJob.noPremultipliedBlendFactors.set(BLEND_NORMAL, [Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA]);
+			RenderJob.noPremultipliedBlendFactors.set(BLEND_ADD, [Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA]);
+			RenderJob.noPremultipliedBlendFactors.set(BLEND_MULTIPLY, [Context3DBlendFactor.DESTINATION_COLOR, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA]);
+			RenderJob.noPremultipliedBlendFactors.set(BLEND_SCREEN, [Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE]);
 		}
 	}
 }

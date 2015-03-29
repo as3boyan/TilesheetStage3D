@@ -1,20 +1,14 @@
 package com.asliceofcrazypie.nme;
 
-import flash.Vector;
 import nme.display.BitmapData;
 import nme.display.Tilesheet;
 import nme.events.Event;
 
 #if flash11
-import flash.utils.TypedDictionary;
 import flash.Vector;
 import haxe.Timer;
-import nme.display.DisplayObject;
-import nme.display.DisplayObjectContainer;
-import nme.display.SimpleButton;
-import nme.display.Sprite;
-import nme.errors.Error;
-import nme.utils.Endian;
+import flash.errors.Error;
+import flash.utils.Endian;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DBlendFactor;
@@ -25,17 +19,13 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
 import flash.display3D.VertexBuffer3D;
-import nme.geom.Matrix3D;
-import nme.geom.Vector3D;
-import nme.display.Stage;
-import nme.display.Graphics;
-import nme.Vector;
-import nme.errors.ArgumentError;
-import nme.utils.ByteArray;
-import nme.events.ErrorEvent;
-import nme.geom.Matrix;
-import nme.geom.Point;
-import nme.geom.Rectangle;
+import flash.display.Stage;
+import flash.display.Graphics;
+import flash.errors.ArgumentError;
+import flash.utils.ByteArray;
+import flash.events.ErrorEvent;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 #end
 
 /**
@@ -44,11 +34,16 @@ import nme.geom.Rectangle;
  */
 class TilesheetStage3D extends Tilesheet
 {
-	public function new( inImage:BitmapData ) 
+	public function new( inImage:BitmapData, premultipliedAlpha:Bool = true ) 
 	{
+		#if flash11
+		inImage = TilesheetStage3D.fixTextureSize( inImage.clone(), true );
+		#end
+		
 		super( inImage );
 		
 		#if flash11
+		this.premultipliedAlpha = premultipliedAlpha;
 		fallbackMode = FallbackMode.ALLOW_FALLBACK;
 		
 		if ( !_isInited && !Type.enumEq( fallbackMode, FallbackMode.NO_FALLBACK ) )
@@ -69,6 +64,8 @@ class TilesheetStage3D extends Tilesheet
 	{
 		texture = context.uploadTexture( __bitmap );
 	}
+	
+	public var premultipliedAlpha(default, null):Bool;
 	
 	private var texture:Texture;
 	
@@ -108,12 +105,12 @@ class TilesheetStage3D extends Tilesheet
 			
 			for ( i in 0...Std.int( ( MAX_VERTEX_PER_BUFFER / 4 ) ) )
 			{
-				indices.writeShort( (i*4) + 2 );
+				indices.writeShort( (i * 4) + 2 );
 				indices.writeShort( (i*4) + 1 );
-				indices.writeShort( (i*4) + 0 );
-				indices.writeShort( (i*4) + 3 );
-				indices.writeShort( (i*4) + 2 );
-				indices.writeShort( (i*4) + 0 );
+				indices.writeShort( (i * 4) + 0 );
+				indices.writeShort( (i * 4) + 3 );
+				indices.writeShort( (i * 4) + 2 );
+				indices.writeShort( (i * 4) + 0 );
 			}
 			
 			_stage = stage;
@@ -155,7 +152,12 @@ class TilesheetStage3D extends Tilesheet
 			var isRotation:Bool = (flags & Tilesheet.TILE_ROTATION) > 0;
 			var isRGB:Bool = (flags & Tilesheet.TILE_RGB) > 0;
 			var isAlpha:Bool = (flags & Tilesheet.TILE_ALPHA) > 0;
-			
+			var isBlendAdd:Bool = (flags & Tilesheet.TILE_BLEND_ADD) > 0;
+			var isBlendMultiply:Bool = (flags & Tilesheet.TILE_BLEND_MULTIPLY) > 0;
+			var isBlendScreen:Bool = (flags & Tilesheet.TILE_BLEND_SCREEN) > 0;
+			var isRect:Bool = (flags & Tilesheet.TILE_RECT) > 0;
+			var isOrigin:Bool = (flags & Tilesheet.TILE_ORIGIN) > 0;
+
 			var scale:Float = 1;
 			var rotation:Float = 0;
 			var cosRotation:Float = Math.cos( rotation );
@@ -165,68 +167,60 @@ class TilesheetStage3D extends Tilesheet
 			var b:Float = 1;
 			var a:Float = 1;
 			
+			var rect:Rectangle;
+			var origin:Point;
 			
 			//determine data structure based on flags
 			var tileDataPerItem:Int = 3;
+			var dataPerVertice:Int = 5;
+			
 			var xOff:Int = 0;
 			var yOff:Int = 1;
 			var tileIdOff:Int = 2;
-			var scaleOff:Int = 3;
-			var rotationOff:Int = 3;
-			var rOff:Int = 3;
-			var gOff:Int = 4;
-			var bOff:Int = 5;
-			var aOff:Int = 3;
+			var scaleOff:Int = 0;
+			var rotationOff:Int = 0;
+			var matrixOff:Int = 0;
+			var matrixPos:Int = 0;
+			var rOff:Int = 0;
+			var gOff:Int = 0;
+			var bOff:Int = 0;
+			var aOff:Int = 0;
 			
-			var dataPerVertice:Int = 5;
+			if (isRect) { tileDataPerItem = isOrigin ? 8 : 6; }
 			
-			if ( isMatrix )
-			{
-				tileDataPerItem += 4;
-				rOff += 4;
-				gOff += 4;
-				bOff += 4;
-				aOff += 4;
+			if (isMatrix) 
+			{ 
+				matrixOff = tileDataPerItem; tileDataPerItem += 4; 
 			}
 			else
 			{
-				if ( isScale )
-				{
-					tileDataPerItem ++;
-					rotationOff++;
-					rOff++;
-					gOff++;
-					bOff++;
-					aOff++;
-				}
-				
-				if ( isRotation )
-				{
-					tileDataPerItem++;
-					rOff++;
-					gOff++;
-					bOff++;
-					aOff++;
-				}
+				if (isScale) { scaleOff = tileDataPerItem; tileDataPerItem++; }
+				if (isRotation) { rotationOff = tileDataPerItem; tileDataPerItem++; }
 			}
 			
-			if ( isRGB )
+			if (isRGB) 
 			{
+				rOff = tileDataPerItem;
+				gOff = tileDataPerItem + 1;
+				bOff = tileDataPerItem + 2;
 				tileDataPerItem += 3;
 				dataPerVertice += 3;
-				aOff+=3;
 			}
-			
-			if ( isAlpha )
+			if (isAlpha) 
 			{
-				dataPerVertice += 1;
+				aOff = tileDataPerItem; 
 				tileDataPerItem++;
+				dataPerVertice++;
 			}
 			
 			var totalCount = count;
+			
 			if (count < 0) {
+				
 				totalCount = tileData.length;
+				
 			}
+			
 			var numItems:Int = Std.int( totalCount / tileDataPerItem );
 			
 			if ( numItems == 0 )
@@ -240,7 +234,6 @@ class TilesheetStage3D extends Tilesheet
 			}
 			
 			//vertex data
-			var indicesPerItem:Int = 6;
 			var vertexPerItem:Int = 4;
 			var numVertices:Int = numItems * vertexPerItem;
 			
@@ -263,6 +256,7 @@ class TilesheetStage3D extends Tilesheet
 			while ( tileDataPos < totalCount )
 			{
 				numItemsThisLoop = numItems > maxNumItems ? maxNumItems : numItems;
+				numItems -= numItemsThisLoop;
 				
 				renderJob = RenderJob.getJob();
 				renderJob.texture = texture;
@@ -271,21 +265,64 @@ class TilesheetStage3D extends Tilesheet
 				renderJob.isSmooth = smooth;
 				renderJob.dataPerVertice = dataPerVertice;
 				renderJob.numVertices = numItemsThisLoop * vertexPerItem;
+				renderJob.premultipliedAlpha = this.premultipliedAlpha;
+				
+				if (isBlendAdd)
+				{
+					renderJob.blendMode = RenderJob.BLEND_ADD;
+				}
+				else if (isBlendMultiply)
+				{
+					renderJob.blendMode = RenderJob.BLEND_MULTIPLY;
+				}
+				else if (isBlendScreen)
+				{
+					renderJob.blendMode = RenderJob.BLEND_SCREEN;
+				}
+				else
+				{
+					renderJob.blendMode = RenderJob.BLEND_NORMAL;
+				}
 				
 				vertexPos = 0;
 				
 				for( i in 0...numItemsThisLoop )
 				{
+					rect = null;
+					origin = null;
+					
+					if (isRect) 
+					{ 
+						rect = __rectTile;
+						origin = __point;
+						
+						rect.setTo(	tileData[tileDataPos + 2], 
+									tileData[tileDataPos + 3], 
+									tileData[tileDataPos + 4], 
+									tileData[tileDataPos + 5]);
+						
+						if (isOrigin)
+						{
+							origin.setTo(	tileData[tileDataPos + 6] / rect.width, 
+											tileData[tileDataPos + 7] / rect.height);
+						}
+						else
+						{
+							origin.setTo(0, 0);
+						}
+					}
+					
 					//calculate transforms
 					transform_tx = tileData[tileDataPos + xOff];
 					transform_ty = tileData[tileDataPos + yOff];
 					
 					if ( isMatrix )
 					{
-						transform_a = tileData[tileDataPos + 3];
-						transform_b = tileData[tileDataPos + 4];
-						transform_c = tileData[tileDataPos + 5];
-						transform_d = tileData[tileDataPos + 6];
+						matrixPos = tileDataPos + matrixOff;
+						transform_a = tileData[matrixPos++];
+						transform_b = tileData[matrixPos++];
+						transform_c = tileData[matrixPos++];
+						transform_d = tileData[matrixPos++];
 					}
 					else
 					{
@@ -335,7 +372,9 @@ class TilesheetStage3D extends Tilesheet
 						a, 
 						renderJob.vertices, 
 						vertexPos,
-						context.getNextDepth()
+						context.getNextDepth(),
+						rect,
+						origin
 					);
 					
 					tileDataPos += tileDataPerItem;
@@ -348,24 +387,28 @@ class TilesheetStage3D extends Tilesheet
 		}
 		else if( !Type.enumEq( fallbackMode, FallbackMode.NO_FALLBACK ) )
 		{
-			if ( (flags & Tilesheet.TILE_TRANS_2x2) > 0 )
-			{
-				throw new ArgumentError( 'Fallback mode does not support matrix transformations' );
-			}
-			
 			super.drawTiles(graphics, tileData, smooth, flags,count);
 		}
 	}
-		
 	
 	
-	private inline function setVertexData(tileId:Int, transform_tx:Float, transform_ty:Float, transform_a:Float, transform_b:Float, transform_c:Float, transform_d:Float, isRGB:Bool, isAlpha:Bool, r:Float, g:Float, b:Float, a:Float, vertices:Vector<Float>, vertexPos:Int, depth:Float ):Void 
+	private inline function setVertexData(tileId:Int, transform_tx:Float, transform_ty:Float, transform_a:Float, transform_b:Float, transform_c:Float, transform_d:Float, isRGB:Bool, isAlpha:Bool, r:Float, g:Float, b:Float, a:Float, vertices:Vector<Float>, vertexPos:Int, depth:Float, rect:Rectangle = null, origin:Point = null ):Void 
 	{
-		var c:Point = tilePoints[tileId];
+		var c:Point = origin;
+		var tile:Rectangle = rect;
+		var uv:Rectangle = __rectUV;
 		
-		var uv:Rectangle = tileUVs[tileId];
+		if (tile == null)
+		{
+			c = __centerPoints[tileId];
+			uv = __tileUVs[tileId];
+			tile = __tileRects[tileId];
+		}
+		else
+		{
+			uv.setTo(tile.left / __bitmapWidth, tile.top / __bitmapHeight, tile.right / __bitmapWidth, tile.bottom / __bitmapHeight);
+		}
 		
-		var tile:Rectangle = tiles[tileId];
 		var imgWidth:Int = Std.int( tile.width );
 		var imgHeight:Int = Std.int( tile.height );
 		
@@ -470,9 +513,9 @@ class TilesheetStage3D extends Tilesheet
 		}
 	}
 	
-	public static var antiAliasing(default,setAntiAliasing):Int;
+	public static var antiAliasing(default,set):Int;
 	
-	private static inline function setAntiAliasing( value:Int ):Int
+	private static inline function set_antiAliasing( value:Int ):Int
 	{
 		antiAliasing = value > 0 ? value < 16 ? value : 16 : 0;//limit value to 0-16
 		
@@ -484,9 +527,9 @@ class TilesheetStage3D extends Tilesheet
 		return antiAliasing;
 	}
 	
-	public static var driverInfo(getDriverInfo, never):String;
+	public static var driverInfo(get, never):String;
 	
-	private static function getDriverInfo():String
+	private static function get_driverInfo():String
 	{
 		if ( context != null && context.context3D != null)
 		{
@@ -551,8 +594,6 @@ class TilesheetStage3D extends Tilesheet
 			newTexture;
 		}
 	}
-	
-	
 	#end
 }
 
